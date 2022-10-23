@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/src/Pingmint.CodeGen.CSharp.CodeWriter/Pingmint.CodeGen.CSharp.CodeWriter.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/src/Pingmint.CodeGen.CSharp.CodeWriter/Pingmint.CodeGen.CSharp.CodeWriter.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/src/Pingmint.CodeGen.CSharp.CodeWriter/Pingmint.CodeGen.CSharp.CodeWriter.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "dotnet pack",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "pack"
+            ],
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}/src/Pingmint.CodeGen.CSharp.CodeWriter"
+            }
+        }
+    ]
+}
