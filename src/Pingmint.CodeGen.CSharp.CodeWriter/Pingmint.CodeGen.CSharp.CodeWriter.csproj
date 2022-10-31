@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>Pingmint.CodeGen.CodeWriter</RootNamespace>
+    <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>0.2</Version>
+    <Title>Pingmint.CodeGen.CSharp.CodeWriter</Title>
+    <PackageId>Pingmint.CodeGen.CSharp.CodeWriter</PackageId>
+    <Authors>Joe Gallagher</Authors>
+    <Description>A simple text writer for C# code</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/JoeGaggler/csharp-writer</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackRelease>true</PackRelease>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+</Project>
