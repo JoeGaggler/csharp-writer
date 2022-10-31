@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.1</Version>
+    <Version>0.2</Version>
     <Title>Pingmint.CodeGen.CSharp.CodeWriter</Title>
     <PackageId>Pingmint.CodeGen.CSharp.CodeWriter</PackageId>
     <Authors>Joe Gallagher</Authors>

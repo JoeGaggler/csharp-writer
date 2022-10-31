@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pingmint.CodeGen.CSharp;
 
-public class CodeWriter
+public partial class CodeWriter
 {
     private Int32 currentIndentation = 0;
 
@@ -67,11 +67,11 @@ public class CodeWriter
     }
 }
 
-public static class CodeWriterExtensions
+public partial class CodeWriter
 {
-    public static void Comment(this CodeWriter writer, String comment) => writer.Line("// {0}", comment);
+    public void Comment(String comment) => Line("// {0}", comment);
 
-    public static IDisposable CreateBraceScope(this CodeWriter writer, String? preamble = null, String? withClosingBrace = null) => new BraceScope(writer, preamble, withClosingBrace);
+    public IDisposable CreateBraceScope(String? preamble = null, String? withClosingBrace = null) => new BraceScope(this, preamble, withClosingBrace);
 
     public sealed class BraceScope : IDisposable
     {
@@ -85,105 +85,150 @@ public static class CodeWriterExtensions
 
             if (preamble != null)
             {
-                this.writer.Line(preamble + "{");
+                writer.Line(preamble + "{");
             }
             else
             {
-                this.writer.Line("{");
+                writer.Line("{");
             }
-            this.writer.Indent();
+            writer.Indent();
         }
 
         public void Dispose()
         {
-            this.writer.Dedent();
+            writer.Dedent();
             if (this.withClosingBrace == null)
             {
-                this.writer.Line("}");
+                writer.Line("}");
             }
             else
             {
-                this.writer.Line("}}{0}", this.withClosingBrace);
+                writer.Line("}}{0}", this.withClosingBrace);
             }
         }
     }
-    public static IDisposable Class(this CodeWriter writer, String modifiers, String name)
+    public IDisposable Class(String modifiers, String name)
     {
-        writer.Line("{0} class {1}", modifiers, name);
-        return new BraceScope(writer);
+        Line("{0} class {1}", modifiers, name);
+        return new BraceScope(this);
     }
 
-    public static IDisposable Class(this CodeWriter writer, String modifiers, String name, String implements)
+    public IDisposable Class(String modifiers, String name, String implements)
     {
-        writer.Line("{0} class {1} : {2}", modifiers, name, implements);
-        return new BraceScope(writer);
+        Line("{0} class {1} : {2}", modifiers, name, implements);
+        return new BraceScope(this);
     }
 
-    public static IDisposable PartialClass(this CodeWriter writer, String modifiers, String name)
+    public IDisposable PartialClass(String modifiers, String name)
     {
-        writer.Line("{0} partial class {1}", modifiers, name);
-        return new BraceScope(writer);
+        Line("{0} partial class {1}", modifiers, name);
+        return new BraceScope(this);
     }
 
-    public static IDisposable PartialClass(this CodeWriter writer, String modifiers, String name, String implements)
+    public IDisposable PartialClass(String modifiers, String name, String implements)
     {
-        writer.Line("{0} partial class {1} : {2}", modifiers, name, implements);
-        return new BraceScope(writer);
+        Line("{0} partial class {1} : {2}", modifiers, name, implements);
+        return new BraceScope(this);
     }
 
-    public static IDisposable Using(this CodeWriter writer, String disposable)
+    public IDisposable Using(String disposable)
     {
-        writer.Line("using ({0})", disposable);
-        return new BraceScope(writer);
+        Line("using ({0})", disposable);
+        return new BraceScope(this);
     }
 
-    public static IDisposable Method(this CodeWriter writer, String modifiers, String returnType, String name, String args)
+    public IDisposable Method(String modifiers, String returnType, String name, String args)
     {
-        writer.Line("{0} {1} {2}({3})", modifiers, returnType, name, args);
-        return new BraceScope(writer);
+        Line("{0} {1} {2}({3})", modifiers, returnType, name, args);
+        return new BraceScope(this);
     }
 
-    public static IDisposable While(this CodeWriter writer, String whileCondition) => new BraceScope(writer, String.Format("while ({0})", whileCondition));
-
-    public static IDisposable DoWhile(this CodeWriter writer, String whileCondition)
+    public IDisposable ExplicitInterfaceMethod(String returnType, String iface, String name, String args)
     {
-        writer.Line("do");
-        return new BraceScope(writer, preamble: null, withClosingBrace: String.Format(" while ({0});", whileCondition));
+        Line("{0} {1}.{2}({3})", returnType, iface, name, args);
+        return new BraceScope(this);
     }
 
-    public static IDisposable Switch(this CodeWriter writer, String switchCondition) => new BraceScope(writer, String.Format("switch ({0})", switchCondition));
-
-    public static IDisposable SwitchCase(this CodeWriter writer, string caseString) => new BraceScope(writer, String.Format("case {0}:", caseString));
-
-    public static IDisposable SwitchCase(this CodeWriter writer, string caseStringFormat, params String[] caseStringArgs) => new BraceScope(writer, String.Format("case {0}:", String.Format(caseStringFormat, caseStringArgs)));
-
-    public static IDisposable SwitchDefault(this CodeWriter writer) => new BraceScope(writer, "default:");
-
-    public static IDisposable Constructor(this CodeWriter writer, String access, String typeName, String parameters = "") => new BraceScope(writer, String.Format("{0} {1}({2})", access, typeName, parameters));
-
-    public static IDisposable ForEach(this CodeWriter writer, String enumerable)
+    public IDisposable While(String whileCondition)
     {
-        writer.Line("foreach ({0})", enumerable);
-        return new BraceScope(writer);
+        Line(String.Format("while ({0})", whileCondition));
+        return new BraceScope(this);
     }
 
-    public static IDisposable If(this CodeWriter writer, String condition)
+    public IDisposable DoWhile(String whileCondition)
     {
-        writer.Line("if ({0})", condition);
-        return new BraceScope(writer);
+        Line("do");
+        return new BraceScope(this, preamble: null, withClosingBrace: String.Format(" while ({0});", whileCondition));
     }
 
-    public static IDisposable If(this CodeWriter writer, String conditionFormat, params String[] conditionArgs)
+    public IDisposable Switch(String switchCondition)
     {
-        writer.Line("if ({0})", String.Format(conditionFormat, conditionArgs));
-        return new BraceScope(writer);
+        Line(String.Format("switch ({0})", switchCondition));
+        return new BraceScope(this);
     }
 
-    public static IDisposable ElseIf(this CodeWriter writer, String condition) => new BraceScope(writer, String.Format("else if ({0})", condition));
+    public IDisposable SwitchCase(string caseString)
+    {
+        Line(String.Format("case {0}:", caseString));
+        return new BraceScope(this);
+    }
 
-    public static IDisposable ElseIf(this CodeWriter writer, String conditionFormat, params String[] conditionArgs) => new BraceScope(writer, String.Format("else if ({0})", String.Format(conditionFormat, conditionArgs)));
+    public IDisposable SwitchCase(string caseStringFormat, params String[] caseStringArgs)
+    {
+        Line(String.Format("case {0}:", String.Format(caseStringFormat, caseStringArgs)));
+        return new BraceScope(this);
+    }
 
-    public static IDisposable Else(this CodeWriter writer) => new BraceScope(writer, "else");
+    public IDisposable SwitchDefault()
+    {
+        Line("default:");
+        return new BraceScope(this);
+    }
 
-    public static void Return(this CodeWriter writer, string returnValue) => writer.Line("return {0};", returnValue);
+    public IDisposable Constructor(String access, String typeName, String parameters = "")
+    {
+        Line(String.Format("{0} {1}({2})", access, typeName, parameters));
+        return new BraceScope(this);
+    }
+
+    public IDisposable ForEach(String enumerable)
+    {
+        Line("foreach ({0})", enumerable);
+        return new BraceScope(this);
+    }
+
+    public IDisposable If(String condition)
+    {
+        Line("if ({0})", condition);
+        return new BraceScope(this);
+    }
+
+    public IDisposable If(String conditionFormat, params String[] conditionArgs)
+    {
+        Line("if ({0})", String.Format(conditionFormat, conditionArgs));
+        return new BraceScope(this);
+    }
+
+    public IDisposable ElseIf(String condition)
+    {
+        Line(String.Format("else if ({0})", condition));
+        return new BraceScope(this);
+    }
+
+    public IDisposable ElseIf(String conditionFormat, params String[] conditionArgs)
+    {
+        Line(String.Format("else if ({0})", String.Format(conditionFormat, conditionArgs)));
+        return new BraceScope(this);
+    }
+
+    public IDisposable Else()
+    {
+        Line("else");
+        return new BraceScope(this);
+    }
+
+    public void Return(string returnValue)
+    {
+        Line("return {0};", returnValue);
+    }
 }
